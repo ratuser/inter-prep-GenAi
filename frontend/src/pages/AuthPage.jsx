@@ -83,7 +83,7 @@ export default function AuthPage() {
 
             // Redirect after a short delay so user sees the success message
             setTimeout(() => {
-                navigate('/');
+                navigate('/dashboard');
             }, 1200);
 
         } catch (err) {
