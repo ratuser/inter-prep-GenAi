@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const navLinks = [
     { name: 'Features', href: '#features' },
@@ -38,12 +39,12 @@ export default function Navbar() {
                                 {link.name}
                             </a>
                         ))}
-                        <a
-                            href="#cta"
+                        <Link
+                            to="/auth"
                             className="px-5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
                         >
                             Get Started
-                        </a>
+                        </Link>
                     </div>
 
                     {/* Mobile Toggle */}
@@ -78,13 +79,13 @@ export default function Navbar() {
                                     {link.name}
                                 </a>
                             ))}
-                            <a
-                                href="#cta"
+                            <Link
+                                to="/auth"
                                 onClick={() => setIsOpen(false)}
                                 className="px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm text-center transition-all duration-300"
                             >
                                 Get Started
-                            </a>
+                            </Link>
                         </div>
                     </motion.div>
                 )}

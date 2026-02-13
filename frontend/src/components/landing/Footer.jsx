@@ -8,8 +8,8 @@ const footerLinks = {
 
 const socialLinks = [
     // { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Github, href: '#', label: 'GitHub' },
+    // { icon: Linkedin, href: '#', label: 'LinkedIn' },
+    { icon: Github, href: 'https://github.com/ratuser', label: 'GitHub' },
 ];
 
 export default function Footer() {
