@@ -1,5 +1,12 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, FileText, BarChart3, Target, Brain, Zap, Clock, Award, TrendingUp, CheckCircle } from 'lucide-react';
+import { Mic, FileText, BarChart3, Target, Brain, Zap, Clock, Award, TrendingUp } from 'lucide-react';
+import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
+import ResumeUploadModal from '../components/dashboard/ResumeUploadModal';
+
+const API_BASE = 'http://localhost:5000/api';
+
+const iconMap = { Mic, Brain, TrendingUp, Zap, Target, Award };
 
 const fadeUp = {
     hidden: { opacity: 0, y: 20 },
@@ -14,33 +21,90 @@ export default function Dashboard() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const firstName = (user.fullName || 'User').split(' ')[0];
 
-    const stats = [
-        { label: 'Total Interviews', value: '24', change: '+3 this week', icon: Mic, color: 'emerald' },
-        { label: 'Questions Practiced', value: '156', change: '+12 this week', icon: Brain, color: 'teal' },
-        { label: 'Average Score', value: '78%', change: '+5% improvement', icon: TrendingUp, color: 'green' },
-        { label: 'Day Streak', value: '7', change: 'Keep it up!', icon: Zap, color: 'lime' },
-    ];
+    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState([]);
+    const [progress, setProgress] = useState([]);
+    const [recentActivity, setRecentActivity] = useState([]);
+    const [resumeUploaded, setResumeUploaded] = useState(false);
+    const [showUploadModal, setShowUploadModal] = useState(false);
 
-    const progress = [
-        { name: 'Technical', value: 72, color: 'emerald' },
-        { name: 'Behavioral', value: 58, color: 'teal' },
-        { name: 'System Design', value: 41, color: 'green' },
-        { name: 'Communication', value: 85, color: 'lime' },
-    ];
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_BASE}/dashboard/stats`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-    const recentActivity = [
-        { title: 'React Hooks Deep Dive', time: '2 hours ago', score: '85%', icon: Brain },
-        { title: 'System Design: URL Shortener', time: '1 day ago', score: '72%', icon: Target },
-        { title: 'Behavioral: Leadership', time: '2 days ago', score: '91%', icon: Award },
-        { title: 'JavaScript Closures', time: '3 days ago', score: '68%', icon: Brain },
-        { title: 'API Design Patterns', time: '4 days ago', score: '76%', icon: Target },
-    ];
+                if (!res.ok) throw new Error('Failed to fetch dashboard data');
+
+                const data = await res.json();
+
+                // Map icon strings back to components
+                setStats(data.stats.map(s => ({ ...s, icon: iconMap[s.icon] || Mic })));
+                setProgress(data.progress);
+                setRecentActivity(data.recentActivity.map(a => ({ ...a, icon: iconMap[a.icon] || Brain })));
+            } catch (err) {
+                console.error('Dashboard fetch error:', err);
+                // Fallback to empty state
+                setStats([
+                    { label: 'Total Interviews', value: '0', change: 'Start practicing!', icon: Mic, color: 'emerald' },
+                    { label: 'Questions Practiced', value: '0', change: 'No questions yet', icon: Brain, color: 'teal' },
+                    { label: 'Average Score', value: '0%', change: 'N/A', icon: TrendingUp, color: 'green' },
+                    { label: 'Day Streak', value: '0', change: 'Start today!', icon: Zap, color: 'lime' },
+                ]);
+                setProgress([
+                    { name: 'Technical', value: 0, color: 'emerald' },
+                    { name: 'Behavioral', value: 0, color: 'teal' },
+                    { name: 'System Design', value: 0, color: 'green' },
+                    { name: 'Communication', value: 0, color: 'lime' },
+                ]);
+                setRecentActivity([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+        fetchResumeStatus();
+    }, []);
+
+    const fetchResumeStatus = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_BASE}/resume/status`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            setResumeUploaded(data.hasResume && data.resume?.status === 'analysed');
+        } catch (err) {
+            console.error('Resume status error:', err);
+        }
+    };
+
+    const handleQuickAction = (label) => {
+        if (label === 'Start Practice') {
+            if (!resumeUploaded) {
+                setShowUploadModal(true);
+            } else {
+                // TODO: Navigate to practice interview page
+                console.log('Starting practice...');
+            }
+        } else if (label === 'Upload Resume') {
+            setShowUploadModal(true);
+        } else if (label === 'View Analytics') {
+            // TODO: Navigate to analytics page
+            console.log('Navigating to analytics...');
+        }
+    };
 
     const quickActions = [
         { label: 'Start Practice', icon: Mic, desc: 'Begin a mock interview' },
         { label: 'Upload Resume', icon: FileText, desc: 'Get AI feedback' },
         { label: 'View Analytics', icon: BarChart3, desc: 'Track your progress' },
     ];
+
+    if (loading) return <DashboardSkeleton />;
 
     return (
         <div>
@@ -121,21 +185,27 @@ export default function Dashboard() {
                 >
                     <h3 className="dash-card-title">Recent Activity</h3>
                     <div className="activity-list">
-                        {recentActivity.map((item, i) => (
-                            <div key={i} className="activity-item">
-                                <div className="activity-icon">
-                                    <item.icon size={16} />
-                                </div>
-                                <div className="activity-info">
-                                    <div className="activity-title">{item.title}</div>
-                                    <div className="activity-time">
-                                        <Clock size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
-                                        {item.time}
+                        {recentActivity.length > 0 ? (
+                            recentActivity.map((item, i) => (
+                                <div key={i} className="activity-item">
+                                    <div className="activity-icon">
+                                        <item.icon size={16} />
                                     </div>
+                                    <div className="activity-info">
+                                        <div className="activity-title">{item.title}</div>
+                                        <div className="activity-time">
+                                            <Clock size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
+                                            {item.time}
+                                        </div>
+                                    </div>
+                                    <div className="activity-score">{item.score}</div>
                                 </div>
-                                <div className="activity-score">{item.score}</div>
+                            ))
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>
+                                No interviews yet. Start practicing to see your activity here!
                             </div>
-                        ))}
+                        )}
                     </div>
                 </motion.div>
             </div>
@@ -151,6 +221,7 @@ export default function Dashboard() {
                         initial="hidden"
                         animate="visible"
                         variants={fadeUp}
+                        onClick={() => handleQuickAction(action.label)}
                     >
                         <div className="quick-action-icon">
                             <action.icon size={24} />
@@ -162,6 +233,16 @@ export default function Dashboard() {
                     </motion.button>
                 ))}
             </div>
+
+            {/* Resume Upload Modal */}
+            <ResumeUploadModal
+                isOpen={showUploadModal}
+                onClose={() => setShowUploadModal(false)}
+                onComplete={() => {
+                    setResumeUploaded(true);
+                    fetchResumeStatus();
+                }}
+            />
         </div>
     );
 }
