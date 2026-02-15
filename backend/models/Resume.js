@@ -27,6 +27,11 @@ const resumeSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    interviewType: {
+        type: String,
+        enum: ['technical', 'non-technical'],
+        default: 'technical',
+    },
     status: {
         type: String,
         enum: ['uploaded', 'analysing', 'analysed'],

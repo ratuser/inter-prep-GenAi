@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Mic, FileText, BarChart3, Target, Brain, Zap, Clock, Award, TrendingUp } from 'lucide-react';
 import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
 import ResumeUploadModal from '../components/dashboard/ResumeUploadModal';
@@ -18,6 +19,7 @@ const fadeUp = {
 };
 
 export default function Dashboard() {
+    const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const firstName = (user.fullName || 'User').split(' ')[0];
 
@@ -84,12 +86,10 @@ export default function Dashboard() {
 
     const handleQuickAction = (label) => {
         if (label === 'Start Practice') {
-            if (!resumeUploaded) {
-                setShowUploadModal(true);
-            } else {
-                // TODO: Navigate to practice interview page
-                console.log('Starting practice...');
+            if (resumeUploaded) {
+                navigate('/dashboard/interview');
             }
+            // disabled — tooltip handles the UX
         } else if (label === 'Upload Resume') {
             setShowUploadModal(true);
         } else if (label === 'View Analytics') {
@@ -99,9 +99,15 @@ export default function Dashboard() {
     };
 
     const quickActions = [
-        { label: 'Start Practice', icon: Mic, desc: 'Begin a mock interview' },
-        { label: 'Upload Resume', icon: FileText, desc: 'Get AI feedback' },
-        { label: 'View Analytics', icon: BarChart3, desc: 'Track your progress' },
+        {
+            label: 'Start Practice',
+            icon: Mic,
+            desc: resumeUploaded ? 'Begin a mock interview' : 'Upload resume first',
+            disabled: !resumeUploaded,
+            variant: 'primary',
+        },
+        { label: 'Upload Resume', icon: FileText, desc: 'Upload & analyse your resume', variant: 'default' },
+        { label: 'View Analytics', icon: BarChart3, desc: 'Track your progress', variant: 'default' },
     ];
 
     if (loading) return <DashboardSkeleton />;
@@ -214,23 +220,31 @@ export default function Dashboard() {
             <h3 className="section-title">Quick Actions</h3>
             <div className="quick-actions">
                 {quickActions.map((action, i) => (
-                    <motion.button
+                    <motion.div
                         key={action.label}
-                        className="quick-action-btn"
+                        className="quick-action-wrapper"
                         custom={i}
                         initial="hidden"
                         animate="visible"
                         variants={fadeUp}
-                        onClick={() => handleQuickAction(action.label)}
                     >
-                        <div className="quick-action-icon">
-                            <action.icon size={24} />
-                        </div>
-                        <span className="quick-action-label">{action.label}</span>
-                        <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>
-                            {action.desc}
-                        </span>
-                    </motion.button>
+                        <button
+                            className={`quick-action-btn ${action.variant === 'primary' ? 'primary' : ''} ${action.disabled ? 'disabled' : ''}`}
+                            onClick={() => !action.disabled && handleQuickAction(action.label)}
+                            disabled={action.disabled}
+                        >
+                            <div className="quick-action-icon">
+                                <action.icon size={24} />
+                            </div>
+                            <span className="quick-action-label">{action.label}</span>
+                            <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>
+                                {action.desc}
+                            </span>
+                        </button>
+                        {action.disabled && (
+                            <div className="quick-action-tooltip">Upload & analyse your resume first</div>
+                        )}
+                    </motion.div>
                 ))}
             </div>
 

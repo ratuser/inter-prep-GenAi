@@ -1,0 +1,690 @@
+/* ===== Settings Pages Shared Styles ===== */
+
+.settings-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0.5rem 0 2rem;
+}
+
+.settings-page-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+}
+
+.settings-page-subtitle {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 1.75rem;
+}
+
+/* ===== Card ===== */
+.settings-card {
+    background: rgba(17, 28, 22, 0.6);
+    border: 1px solid rgba(16, 185, 129, 0.08);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.settings-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.settings-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.settings-edit-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: rgba(16, 185, 129, 0.06);
+    color: #10b981;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.settings-edit-btn:hover {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.35);
+}
+
+/* ===== Profile Hero ===== */
+.profile-hero-card {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(17, 28, 22, 0.6));
+    border-color: rgba(16, 185, 129, 0.15);
+}
+
+.profile-hero {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.profile-avatar-large {
+    width: 72px;
+    height: 72px;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+}
+
+.profile-hero-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.profile-hero-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.profile-hero-email {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.profile-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    font-size: 0.68rem;
+    font-weight: 600;
+    width: fit-content;
+}
+
+/* ===== Fields ===== */
+.settings-field-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.settings-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.settings-field-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.settings-field-value {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    padding: 0.5rem 0;
+}
+
+.settings-field-input {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border-radius: 0.5rem;
+    background: rgba(16, 185, 129, 0.04);
+    border: 1px solid rgba(16, 185, 129, 0.12);
+    color: #ffffff;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.settings-field-input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.settings-field-input:focus {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.06);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.06);
+}
+
+/* Password field */
+.settings-password-wrap {
+    position: relative;
+}
+
+.settings-password-wrap .settings-field-input {
+    padding-right: 2.5rem;
+}
+
+.settings-eye-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    padding: 0.3rem;
+    display: flex;
+    align-items: center;
+}
+
+.settings-eye-btn:hover {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== Actions ===== */
+.settings-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    justify-content: flex-end;
+}
+
+.settings-save-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.settings-save-btn:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    transform: translateY(-1px);
+}
+
+.settings-save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.settings-cancel-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.settings-cancel-btn:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===== Message ===== */
+.settings-message {
+    margin-top: 1rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.settings-message.success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.settings-message.error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+/* ===== Danger Zone ===== */
+.danger-card {
+    border-color: rgba(239, 68, 68, 0.12);
+}
+
+.danger-title {
+    color: #f87171 !important;
+}
+
+.danger-desc {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0 0 1rem;
+    line-height: 1.5;
+}
+
+.danger-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    background: rgba(239, 68, 68, 0.06);
+    color: #f87171;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.danger-btn:hover {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.danger-confirm {
+    overflow: hidden;
+}
+
+.danger-confirm-text {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 0.75rem;
+}
+
+.danger-confirm-text strong {
+    color: #f87171;
+}
+
+.danger-input {
+    border-color: rgba(239, 68, 68, 0.2) !important;
+    margin-bottom: 0.75rem;
+}
+
+.danger-input:focus {
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.06) !important;
+}
+
+.danger-confirm-actions {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.danger-confirm-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.danger-confirm-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.danger-confirm-btn:hover:not(:disabled) {
+    background: #dc2626;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* ===== FAQ ===== */
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.faq-item {
+    border-radius: 0.625rem;
+    border: 1px solid rgba(16, 185, 129, 0.06);
+    background: rgba(10, 18, 14, 0.3);
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.faq-item.open {
+    border-color: rgba(16, 185, 129, 0.15);
+    background: rgba(16, 185, 129, 0.03);
+}
+
+.faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+}
+
+.faq-question-left {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.faq-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 0.4rem;
+    background: rgba(16, 185, 129, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #10b981;
+    flex-shrink: 0;
+}
+
+.faq-chevron {
+    color: rgba(255, 255, 255, 0.3);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+}
+
+.faq-chevron.rotated {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    overflow: hidden;
+}
+
+.faq-answer p {
+    padding: 0 1rem 1rem 3.5rem;
+    margin: 0;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+}
+
+/* ===== Help Contact ===== */
+.help-contact-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0 0 1rem;
+    line-height: 1.5;
+}
+
+.help-contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    background: rgba(16, 185, 129, 0.08);
+    color: #10b981;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.help-contact-btn:hover {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+/* ===== Resume Card ===== */
+.resume-loading {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.82rem;
+    padding: 1.5rem 0;
+}
+
+.resume-card {
+    border-radius: 0.75rem;
+    background: rgba(10, 18, 14, 0.4);
+    border: 1px solid rgba(16, 185, 129, 0.08);
+    padding: 1.1rem;
+}
+
+.resume-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.resume-card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 0.6rem;
+    background: rgba(16, 185, 129, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #10b981;
+    flex-shrink: 0;
+}
+
+.resume-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.resume-card-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.resume-card-status {
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+
+.resume-card-status.analysed {
+    color: #10b981;
+}
+
+.resume-card-status.analysing {
+    color: #f59e0b;
+}
+
+.resume-card-status.uploaded {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.resume-card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid rgba(16, 185, 129, 0.06);
+    margin-bottom: 0.5rem;
+}
+
+.resume-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.resume-detail svg {
+    color: #10b981;
+    flex-shrink: 0;
+}
+
+.resume-detail-label {
+    color: rgba(255, 255, 255, 0.35);
+    font-weight: 500;
+}
+
+.resume-skills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+}
+
+.resume-skill-tag {
+    padding: 0.2rem 0.55rem;
+    border-radius: 1rem;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    font-size: 0.68rem;
+    font-weight: 500;
+}
+
+.resume-skill-tag.more {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Resume actions */
+.resume-card-actions {
+    border-top: 1px solid rgba(16, 185, 129, 0.06);
+    padding-top: 0.75rem;
+}
+
+.resume-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.05);
+    color: #f87171;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.resume-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+.resume-delete-confirm {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.resume-confirm-yes {
+    padding: 0.35rem 0.7rem;
+    border-radius: 0.4rem;
+    border: none;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+}
+
+.resume-confirm-yes:hover:not(:disabled) {
+    background: #dc2626;
+}
+
+.resume-confirm-yes:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.resume-confirm-no {
+    padding: 0.35rem 0.7rem;
+    border-radius: 0.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.72rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+}
+
+.resume-confirm-no:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Empty state */
+.resume-empty {
+    text-align: center;
+    padding: 2rem 0;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.resume-empty p {
+    margin: 0.5rem 0 0.15rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.resume-empty span {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.25);
+}

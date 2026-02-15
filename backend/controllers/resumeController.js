@@ -58,6 +58,7 @@ const uploadResume = (req, res) => {
                     targetRole: '',
                     targetCompany: '',
                     experience: '',
+                    interviewType: 'technical',
                     parsedData: {},
                 },
                 { upsert: true, new: true, returnDocument: 'after' }
@@ -97,6 +98,7 @@ const getResumeStatus = async (req, res) => {
                 targetRole: resume.targetRole,
                 targetCompany: resume.targetCompany,
                 experience: resume.experience,
+                interviewType: resume.interviewType,
                 parsedData: resume.parsedData,
             },
         });
@@ -146,7 +148,7 @@ function extractResumeData(rawText) {
 // @route   POST /api/resume/analyse
 const analyseResume = async (req, res) => {
     try {
-        const { targetRole, targetCompany, experience } = req.body;
+        const { targetRole, targetCompany, experience, interviewType } = req.body;
 
         if (!targetRole || !targetCompany || !experience) {
             return res.status(400).json({ message: 'All fields are required' });
@@ -172,6 +174,7 @@ const analyseResume = async (req, res) => {
         resume.targetRole = targetRole;
         resume.targetCompany = targetCompany;
         resume.experience = experience;
+        resume.interviewType = interviewType || 'technical';
         resume.status = 'analysed';
         resume.parsedData = parsedData;
         await resume.save();
@@ -193,4 +196,27 @@ const analyseResume = async (req, res) => {
     }
 };
 
-module.exports = { uploadResume, getResumeStatus, analyseResume };
+// @desc    Delete a resume
+// @route   DELETE /api/resume/:id
+const deleteResume = async (req, res) => {
+    try {
+        const resume = await Resume.findOne({ _id: req.params.id, userId: req.userId });
+        if (!resume) {
+            return res.status(404).json({ message: 'Resume not found' });
+        }
+
+        // Delete the uploaded file
+        const fs = require('fs');
+        if (resume.filePath && fs.existsSync(resume.filePath)) {
+            fs.unlinkSync(resume.filePath);
+        }
+
+        await Resume.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Resume deleted successfully' });
+    } catch (error) {
+        console.error('Delete resume error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports = { uploadResume, getResumeStatus, analyseResume, deleteResume };

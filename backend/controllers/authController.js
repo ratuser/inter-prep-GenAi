@@ -101,4 +101,87 @@ const getMe = async (req, res) => {
     }
 };
 
-module.exports = { register, login, getMe };
+// @desc    Update user profile (name)
+// @route   PUT /api/auth/update-profile
+const updateProfile = async (req, res) => {
+    try {
+        const { fullName } = req.body;
+        if (!fullName || fullName.trim().length < 2) {
+            return res.status(400).json({ message: 'Name must be at least 2 characters' });
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.userId,
+            { fullName: fullName.trim() },
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({ message: 'Profile updated', user });
+    } catch (error) {
+        console.error('UpdateProfile error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc    Change password
+// @route   PUT /api/auth/change-password
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ message: 'Current and new passwords are required' });
+        }
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: 'New password must be at least 6 characters' });
+        }
+
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Plain text comparison (matching existing auth pattern)
+        if (user.password !== currentPassword) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        res.json({ message: 'Password changed successfully' });
+    } catch (error) {
+        console.error('ChangePassword error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc    Delete user account
+// @route   DELETE /api/auth/delete-account
+const deleteAccount = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Also clean up related data
+        try {
+            const Resume = require('../models/Resume');
+            await Resume.deleteMany({ userId: req.userId });
+        } catch (_) {
+            // Resume model might not exist, that's OK
+        }
+
+        res.json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        console.error('DeleteAccount error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports = { register, login, getMe, updateProfile, changePassword, deleteAccount };

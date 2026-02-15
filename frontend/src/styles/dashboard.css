@@ -590,6 +590,75 @@
     font-weight: 600;
 }
 
+/* Wrapper for tooltip positioning */
+.quick-action-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-action-wrapper .quick-action-btn {
+    flex: 1;
+    width: 100%;
+}
+
+/* Primary variant — makes "Start Practice" pop */
+.quick-action-btn.primary:not(.disabled) {
+    border-color: rgba(16, 185, 129, 0.25);
+    background: rgba(16, 185, 129, 0.06);
+}
+
+.quick-action-btn.primary:not(.disabled) .quick-action-icon {
+    background: rgba(16, 185, 129, 0.18);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.1);
+}
+
+.quick-action-btn.primary:not(.disabled):hover {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.12);
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.2);
+}
+
+/* Disabled state */
+.quick-action-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.quick-action-wrapper:has(.disabled) {
+    cursor: not-allowed;
+}
+
+.quick-action-wrapper:has(.disabled):hover .quick-action-btn.disabled {
+    pointer-events: none;
+}
+
+/* Tooltip */
+.quick-action-tooltip {
+    position: absolute;
+    bottom: -2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.4rem;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    font-size: 0.7rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.quick-action-wrapper:hover .quick-action-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 /* ===== Section Title ===== */
 .section-title {
     font-size: 1.05rem;
@@ -1328,4 +1397,53 @@
 
 .confirm-start-btn {
     flex: 1;
+}
+
+/* ===== Interview Type Toggle ===== */
+.interview-type-toggle {
+    display: flex;
+    gap: 0;
+    border-radius: 0.625rem;
+    background: rgba(16, 185, 129, 0.04);
+    border: 1px solid rgba(16, 185, 129, 0.12);
+    overflow: hidden;
+}
+
+.type-toggle-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1rem;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.type-toggle-btn:first-child {
+    border-right: 1px solid rgba(16, 185, 129, 0.12);
+}
+
+.type-toggle-btn.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.05);
+}
+
+.type-toggle-btn:hover:not(.active) {
+    background: rgba(16, 185, 129, 0.06);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.type-hint {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin: 0.15rem 0 0;
+    font-style: italic;
 }

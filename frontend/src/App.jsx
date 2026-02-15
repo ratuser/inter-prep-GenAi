@@ -4,6 +4,9 @@ import LandingPage from './pages/LandingPage'
 import AuthPage from './pages/AuthPage'
 import Dashboard from './pages/Dashboard'
 import InterviewChat from './pages/InterviewChat'
+import Profile from './pages/Profile'
+import Settings from './pages/Settings'
+import HelpCenter from './pages/HelpCenter'
 import DashboardLayout from './components/dashboard/DashboardLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -33,10 +36,39 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/dashboard/profile"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Profile />
+              </DashboardLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/settings"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Settings />
+              </DashboardLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/help"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <HelpCenter />
+              </DashboardLayout>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   )
 }
 
 export default App
-

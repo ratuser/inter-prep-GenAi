@@ -1,10 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, ArrowLeft, Loader2 } from 'lucide-react';
+import { Send, Bot, User, ArrowLeft, Loader2, Mic, MicOff, Volume2, VolumeX, Keyboard, AudioLines } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/interview.css';
 
 const API_BASE = 'http://localhost:5000/api';
+
+// Check browser support for Speech APIs
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const speechSynthesis = window.speechSynthesis;
 
 export default function InterviewChat() {
     const navigate = useNavigate();
@@ -15,13 +19,87 @@ export default function InterviewChat() {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
+    // Voice mode state
+    const [voiceMode, setVoiceMode] = useState(false);
+    const [isListening, setIsListening] = useState(false);
+    const [transcript, setTranscript] = useState('');
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [voiceSupported, setVoiceSupported] = useState(false);
+    const recognitionRef = useRef(null);
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, isAiTyping]);
+    }, [messages, isAiTyping, transcript]);
+
+    // Initialize speech recognition
+    useEffect(() => {
+        if (SpeechRecognition) {
+            setVoiceSupported(true);
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (event) => {
+                let interim = '';
+                let final = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const t = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        final += t;
+                    } else {
+                        interim += t;
+                    }
+                }
+                setTranscript(final || interim);
+            };
+
+            recognition.onend = () => {
+                setIsListening(false);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                setIsListening(false);
+                setTranscript('');
+            };
+
+            recognitionRef.current = recognition;
+        }
+
+        return () => {
+            if (recognitionRef.current) {
+                try { recognitionRef.current.abort(); } catch (_) { }
+            }
+            speechSynthesis?.cancel();
+        };
+    }, []);
+
+    // Speak text aloud using SpeechSynthesis
+    const speakText = (text) => {
+        if (!speechSynthesis || !voiceMode) return;
+
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1;
+        utterance.pitch = 1;
+
+        // Try to pick a good English voice
+        const voices = speechSynthesis.getVoices();
+        const preferred = voices.find(v => v.lang === 'en-US' && v.name.includes('Google'))
+            || voices.find(v => v.lang === 'en-US')
+            || voices.find(v => v.lang.startsWith('en'));
+        if (preferred) utterance.voice = preferred;
+
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+        speechSynthesis.speak(utterance);
+    };
 
     // Load resume info and start interview
     useEffect(() => {
@@ -42,6 +120,11 @@ export default function InterviewChat() {
 
                 setResumeInfo(resumeData.resume);
 
+                // Set voice mode default based on interview type
+                if (resumeData.resume.interviewType === 'non-technical' && SpeechRecognition) {
+                    setVoiceMode(true);
+                }
+
                 // Send first message to AI to start
                 setIsAiTyping(true);
                 const chatRes = await fetch(`${API_BASE}/interview/chat`, {
@@ -59,6 +142,13 @@ export default function InterviewChat() {
                 const chatData = await chatRes.json();
                 setMessages([{ role: 'ai', content: chatData.message }]);
                 setIsAiTyping(false);
+
+                // Speak the AI's first message if voice mode
+                if (resumeData.resume.interviewType === 'non-technical' && SpeechRecognition) {
+                    // Small delay to let voices load
+                    setTimeout(() => speakText(chatData.message), 500);
+                }
+
                 inputRef.current?.focus();
             } catch (err) {
                 console.error('Init interview error:', err);
@@ -69,11 +159,38 @@ export default function InterviewChat() {
         initInterview();
     }, [navigate]);
 
-    const sendMessage = async () => {
-        if (!input.trim() || isAiTyping) return;
+    // Start listening
+    const startListening = () => {
+        if (!recognitionRef.current || isAiTyping || isSpeaking) return;
+        speechSynthesis?.cancel(); // stop any ongoing speech
+        setTranscript('');
+        setIsListening(true);
+        try {
+            recognitionRef.current.start();
+        } catch (_) {
+            // Already started
+        }
+    };
 
-        const userMessage = input.trim();
-        const newMessages = [...messages, { role: 'user', content: userMessage }];
+    // Stop listening and send the transcript
+    const stopListeningAndSend = () => {
+        if (!recognitionRef.current) return;
+        recognitionRef.current.stop();
+        setIsListening(false);
+
+        // Use the transcript as the message
+        if (transcript.trim()) {
+            const userMessage = transcript.trim();
+            setTranscript('');
+            sendMessageText(userMessage);
+        } else {
+            setTranscript('');
+        }
+    };
+
+    // Core message sender
+    const sendMessageText = async (text) => {
+        const newMessages = [...messages, { role: 'user', content: text }];
         setMessages(newMessages);
         setInput('');
         setIsAiTyping(true);
@@ -87,19 +204,31 @@ export default function InterviewChat() {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    message: userMessage,
+                    message: text,
                     conversationHistory: newMessages,
                 }),
             });
 
             const data = await res.json();
-            setMessages(prev => [...prev, { role: 'ai', content: data.message }]);
+            const aiMessage = data.message || 'Sorry, I encountered an error. Please try again.';
+            setMessages(prev => [...prev, { role: 'ai', content: aiMessage }]);
+
+            // Speak AI response if voice mode is on
+            if (voiceMode) {
+                speakText(aiMessage);
+            }
         } catch (err) {
-            setMessages(prev => [...prev, { role: 'ai', content: 'Sorry, I encountered an error. Please try again.' }]);
+            const errorMsg = 'Sorry, I encountered an error. Please try again.';
+            setMessages(prev => [...prev, { role: 'ai', content: errorMsg }]);
         } finally {
             setIsAiTyping(false);
             inputRef.current?.focus();
         }
+    };
+
+    const sendMessage = () => {
+        if (!input.trim() || isAiTyping) return;
+        sendMessageText(input.trim());
     };
 
     const handleKeyDown = (e) => {
@@ -109,6 +238,27 @@ export default function InterviewChat() {
         }
     };
 
+    const toggleVoiceMode = () => {
+        if (!voiceSupported) return;
+        const newMode = !voiceMode;
+        setVoiceMode(newMode);
+        if (!newMode) {
+            // Switching to text — stop any voice activity
+            speechSynthesis?.cancel();
+            setIsSpeaking(false);
+            if (isListening) {
+                recognitionRef.current?.stop();
+                setIsListening(false);
+                setTranscript('');
+            }
+        }
+    };
+
+    const stopSpeaking = () => {
+        speechSynthesis?.cancel();
+        setIsSpeaking(false);
+    };
+
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const firstName = (user.fullName || 'You').split(' ')[0];
 
@@ -116,7 +266,10 @@ export default function InterviewChat() {
         <div className="interview-chat-page">
             {/* Header */}
             <div className="chat-header">
-                <button className="chat-back-btn" onClick={() => navigate('/dashboard')}>
+                <button className="chat-back-btn" onClick={() => {
+                    speechSynthesis?.cancel();
+                    navigate('/dashboard');
+                }}>
                     <ArrowLeft size={18} />
                 </button>
                 <div className="chat-header-info">
@@ -130,12 +283,40 @@ export default function InterviewChat() {
                                 <span className="chat-header-role">{resumeInfo.targetRole} at {resumeInfo.targetCompany}</span>
                             )}
                         </h2>
-                        <span className={`chat-status ${isAiTyping ? 'typing' : 'online'}`}>
-                            {isAiTyping ? 'Thinking...' : 'Online'}
+                        <span className={`chat-status ${isAiTyping ? 'typing' : isSpeaking ? 'speaking' : 'online'}`}>
+                            {isAiTyping ? 'Thinking...' : isSpeaking ? 'Speaking...' : 'Online'}
                         </span>
                     </div>
                 </div>
+
+                {/* Voice/Text mode toggle */}
+                {voiceSupported && (
+                    <button
+                        className={`voice-mode-toggle ${voiceMode ? 'voice-active' : ''}`}
+                        onClick={toggleVoiceMode}
+                        title={voiceMode ? 'Switch to text mode' : 'Switch to voice mode'}
+                    >
+                        {voiceMode ? <Keyboard size={16} /> : <AudioLines size={16} />}
+                        <span>{voiceMode ? 'Text' : 'Voice'}</span>
+                    </button>
+                )}
             </div>
+
+            {/* Voice mode banner */}
+            <AnimatePresence>
+                {voiceMode && (
+                    <motion.div
+                        className="voice-mode-banner"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <AudioLines size={14} />
+                        <span>Voice mode — tap the mic to speak, AI will respond aloud</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Messages */}
             <div className="chat-messages">
@@ -182,28 +363,78 @@ export default function InterviewChat() {
                     </motion.div>
                 )}
 
+                {/* Live transcript while listening */}
+                {isListening && transcript && (
+                    <motion.div
+                        className="chat-message user"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        <div className="message-avatar">
+                            <User size={16} />
+                        </div>
+                        <div className="message-content">
+                            <div className="message-sender">{firstName}</div>
+                            <div className="message-text transcript-preview">{transcript}</div>
+                        </div>
+                    </motion.div>
+                )}
+
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
+            {/* Input Bar */}
             <div className="chat-input-bar">
-                <textarea
-                    ref={inputRef}
-                    className="chat-input"
-                    placeholder="Type your answer..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    rows={1}
-                    disabled={isAiTyping}
-                />
-                <button
-                    className={`chat-send-btn ${input.trim() && !isAiTyping ? 'active' : ''}`}
-                    onClick={sendMessage}
-                    disabled={!input.trim() || isAiTyping}
-                >
-                    {isAiTyping ? <Loader2 size={18} className="spin-icon" /> : <Send size={18} />}
-                </button>
+                {voiceMode ? (
+                    /* Voice mode input */
+                    <div className="voice-input-area">
+                        {isSpeaking && (
+                            <button className="stop-speaking-btn" onClick={stopSpeaking}>
+                                <VolumeX size={16} />
+                                Stop
+                            </button>
+                        )}
+                        <button
+                            className={`mic-btn ${isListening ? 'listening' : ''}`}
+                            onClick={isListening ? stopListeningAndSend : startListening}
+                            disabled={isAiTyping || isSpeaking}
+                        >
+                            <div className="mic-btn-inner">
+                                {isListening ? <MicOff size={24} /> : <Mic size={24} />}
+                            </div>
+                            {isListening && (
+                                <div className="mic-pulse-ring" />
+                            )}
+                        </button>
+                        <span className="mic-hint">
+                            {isAiTyping ? 'AI is thinking...'
+                                : isSpeaking ? 'AI is speaking...'
+                                    : isListening ? 'Listening... tap to send'
+                                        : 'Tap to speak'}
+                        </span>
+                    </div>
+                ) : (
+                    /* Text mode input */
+                    <>
+                        <textarea
+                            ref={inputRef}
+                            className="chat-input"
+                            placeholder="Type your answer..."
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            rows={1}
+                            disabled={isAiTyping}
+                        />
+                        <button
+                            className={`chat-send-btn ${input.trim() && !isAiTyping ? 'active' : ''}`}
+                            onClick={sendMessage}
+                            disabled={!input.trim() || isAiTyping}
+                        >
+                            {isAiTyping ? <Loader2 size={18} className="spin-icon" /> : <Send size={18} />}
+                        </button>
+                    </>
+                )}
             </div>
         </div>
     );

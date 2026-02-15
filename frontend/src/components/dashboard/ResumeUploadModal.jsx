@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, FileText, CheckCircle, X, AlertCircle, Briefcase, Building2, Clock, Sparkles, User, Mail, Phone, Code, GraduationCap, RotateCcw } from 'lucide-react';
+import { Upload, FileText, CheckCircle, X, AlertCircle, Briefcase, Building2, Clock, Sparkles, User, Mail, Phone, Code, GraduationCap, RotateCcw, Monitor, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const API_BASE = 'http://localhost:5000/api';
@@ -32,6 +32,7 @@ export default function ResumeUploadModal({ isOpen, onClose, onComplete }) {
     const [targetCompany, setTargetCompany] = useState('');
     const [experience, setExperience] = useState('');
     const [parsedData, setParsedData] = useState(null);
+    const [interviewType, setInterviewType] = useState('technical');
     const fileInputRef = useRef(null);
 
     const resetState = useCallback(() => {
@@ -43,6 +44,7 @@ export default function ResumeUploadModal({ isOpen, onClose, onComplete }) {
         setTargetRole('');
         setTargetCompany('');
         setExperience('');
+        setInterviewType('technical');
         setParsedData(null);
     }, []);
 
@@ -125,7 +127,7 @@ export default function ResumeUploadModal({ isOpen, onClose, onComplete }) {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ targetRole, targetCompany, experience }),
+                body: JSON.stringify({ targetRole, targetCompany, experience, interviewType }),
             });
 
             const data = await res.json();
@@ -369,6 +371,36 @@ export default function ResumeUploadModal({ isOpen, onClose, onComplete }) {
                                                 <option key={opt} value={opt}>{opt}</option>
                                             ))}
                                         </select>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="form-label">
+                                            <Monitor size={14} />
+                                            Interview Type
+                                        </label>
+                                        <div className="interview-type-toggle">
+                                            <button
+                                                type="button"
+                                                className={`type-toggle-btn ${interviewType === 'technical' ? 'active' : ''}`}
+                                                onClick={() => setInterviewType('technical')}
+                                            >
+                                                <Code size={14} />
+                                                Technical
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`type-toggle-btn ${interviewType === 'non-technical' ? 'active' : ''}`}
+                                                onClick={() => setInterviewType('non-technical')}
+                                            >
+                                                <MessageCircle size={14} />
+                                                Non-Technical
+                                            </button>
+                                        </div>
+                                        <p className="type-hint">
+                                            {interviewType === 'technical'
+                                                ? 'Coding, system design & technical problem-solving'
+                                                : 'Behavioral, situational & communication-focused (voice enabled)'}
+                                        </p>
                                     </div>
                                 </div>
 

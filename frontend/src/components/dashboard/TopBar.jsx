@@ -9,15 +9,15 @@ export default function TopBar() {
                 <span className="topbar-breadcrumb-active">Overview</span>
             </div>
             <div className="topbar-actions">
-                <button className="topbar-icon-btn" title="Dark mode">
+                {/* <button className="topbar-icon-btn" title="Dark mode">
                     <Moon size={16} />
-                </button>
-                <button className="topbar-icon-btn" title="Notifications">
+                </button> */}
+                {/* <button className="topbar-icon-btn" title="Notifications">
                     <Bell size={16} />
                 </button>
                 <button className="topbar-icon-btn" title="Language">
                     <Globe size={16} />
-                </button>
+                </button> */}
             </div>
         </div>
     );
