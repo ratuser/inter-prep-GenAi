@@ -6,7 +6,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Retry helper with exponential backoff for rate-limited API calls
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function callWithRetry(fn, maxRetries = 3, baseDelay = 2000) {
+async function callWithRetry(fn, maxRetries = 5, baseDelay = 5000) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
             return await fn();
@@ -42,36 +42,20 @@ const chatWithAI = async (req, res) => {
 
         const { parsedData, targetRole, targetCompany, experience, interviewType } = resume;
 
-        // Build the system prompt based on interview type
+        // Build a MINIMAL system prompt to save tokens (free tier)
         const isNonTech = interviewType === 'non-technical';
+        const topSkills = (parsedData.skills || []).slice(0, 5).join(', ');
 
-        const systemPrompt = `You are an expert interviewer at ${targetCompany} conducting a mock interview for the role of ${targetRole}.
+        const systemPrompt = `You are interviewing a candidate for ${targetRole} at ${targetCompany}. Experience: ${experience}. Skills: ${topSkills || 'N/A'}.
+Rules: Ask ONE question at a time. Keep responses to 2-3 sentences. ${isNonTech ? 'Only behavioral/soft-skill questions, NO coding.' : 'Mix technical and behavioral questions.'} Give brief feedback after each answer. After 8 exchanges, summarize performance.`;
 
-CANDIDATE PROFILE:
-- Name: ${parsedData.name || 'Not provided'}
-- Experience Level: ${experience}
-- Skills: ${parsedData.skills?.join(', ') || 'Not listed'}
-- Experience: ${parsedData.experienceText || 'Not provided'}
-- Education: ${parsedData.education || 'Not provided'}
-
-YOUR BEHAVIOR:
-1. Act as a professional, friendly interviewer
-2. Ask ONE question at a time — never stack multiple questions
-3. Start with a brief intro, then ask your first question
-${isNonTech
-                ? `4. Focus ONLY on behavioral, situational, communication, and leadership questions
-5. Ask about teamwork, conflict resolution, problem-solving scenarios, and past experiences
-6. Do NOT ask any coding, technical, or algorithm questions
-7. Evaluate communication clarity, confidence, and structured thinking (e.g. STAR method)`
-                : `4. Mix technical questions (based on their skills) with behavioral questions
-5. Include coding concepts, system design, and problem-solving questions relevant to ${targetRole}`}
-6. After the candidate answers, give brief constructive feedback, then ask the next question
-7. Tailor difficulty to their experience level (${experience})
-8. Keep responses concise — max 3-4 sentences per turn
-9. After about 8-10 exchanges, wrap up the interview with a summary of their performance
-10. Be encouraging but honest — point out areas to improve
-
-IMPORTANT: You are interviewing for ${targetRole} at ${targetCompany}. Make it feel like a real interview.${isNonTech ? ' This is a NON-TECHNICAL interview — focus entirely on soft skills and behavioral questions.' : ''}`;
+        // DEBUG: Log what we're sending to Gemini
+        console.log('\n===== GEMINI REQUEST =====');
+        console.log('System prompt length:', systemPrompt.length, 'chars');
+        console.log('System prompt:', systemPrompt);
+        console.log('History messages:', (conversationHistory || []).length);
+        console.log('User message:', message);
+        console.log('==========================\n');
 
         // Build conversation for Gemini
         const model = genAI.getGenerativeModel({
@@ -79,8 +63,11 @@ IMPORTANT: You are interviewing for ${targetRole} at ${targetCompany}. Make it f
             systemInstruction: systemPrompt,
         });
 
+        // Cap history to last 4 messages to save tokens
+        let trimmedHistory = (conversationHistory || []).slice(-4);
+
         // Gemini requires history to start with 'user' role — drop any leading 'model' entries
-        let history = (conversationHistory || []).map(msg => ({
+        let history = trimmedHistory.map(msg => ({
             role: msg.role === 'ai' ? 'model' : 'user',
             parts: [{ text: msg.content }],
         }));
@@ -92,7 +79,7 @@ IMPORTANT: You are interviewing for ${targetRole} at ${targetCompany}. Make it f
 
         // Use retry wrapper for the Gemini API call
         const result = await callWithRetry(() =>
-            chat.sendMessage(message || 'Hello, I am ready for the interview. Please introduce yourself and start.')
+            chat.sendMessage(message || 'Start the interview.')
         );
         const aiResponse = result.response.text();
 

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Play } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Hero() {
     return (
@@ -10,7 +11,7 @@ export default function Hero() {
             <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl animate-float" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
 
-            
+
             <div
                 className="absolute inset-0 opacity-[0.03]"
                 style={{
@@ -20,7 +21,7 @@ export default function Hero() {
             />
 
             <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                
+
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -31,7 +32,7 @@ export default function Hero() {
                     AI-Powered Interview Preparation
                 </motion.div>
 
-                
+
                 <motion.h1
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -44,7 +45,7 @@ export default function Hero() {
                     With Confidence
                 </motion.h1>
 
-                
+
                 <motion.p
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -54,20 +55,20 @@ export default function Hero() {
                     Upload your resume, practice with AI-generated questions tailored to your target role, and get personalized feedback to land your dream job.
                 </motion.p>
 
-                
+
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.3 }}
                     className="flex flex-col sm:flex-row items-center justify-center gap-4"
                 >
-                    <a
-                        href="#cta"
+                    <Link
+                        to="/auth"
                         className="group flex items-center gap-2 px-8 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-base transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:scale-105"
                     >
                         Start Practicing
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </a>
+                    </Link>
                     <a
                         href="#how-it-works"
                         className="group flex items-center gap-2 px-8 py-3.5 rounded-xl glass glass-hover text-gray-300 hover:text-white font-semibold text-base transition-all duration-300"
@@ -77,7 +78,7 @@ export default function Hero() {
                     </a>
                 </motion.div>
 
-                
+
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -97,7 +98,7 @@ export default function Hero() {
                 </motion.div>
             </div>
 
-            
+
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a120e] to-transparent" />
         </section>
     );

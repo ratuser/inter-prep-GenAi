@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function CTA() {
     return (
@@ -12,10 +13,10 @@ export default function CTA() {
                     transition={{ duration: 0.7 }}
                     className="relative overflow-hidden rounded-3xl glass p-12 sm:p-16 text-center"
                 >
-                    
+
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl" />
 
-                    
+
                     <div
                         className="absolute inset-0 opacity-[0.03]"
                         style={{
@@ -39,13 +40,13 @@ export default function CTA() {
                             Join thousands of job seekers who landed their dream roles with InterPrep. Your next career move starts here.
                         </p>
 
-                        <a
-                            href="#"
+                        <Link
+                            to="/auth"
                             className="group inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-lg transition-all duration-300 hover:shadow-[0_0_40px_rgba(16,185,129,0.4)] hover:scale-105 animate-pulse-glow"
                         >
                             Get Started Now
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </a>
+                        </Link>
                     </div>
                 </motion.div>
             </div>

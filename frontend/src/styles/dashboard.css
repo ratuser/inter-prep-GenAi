@@ -1447,3 +1447,145 @@
     margin: 0.15rem 0 0;
     font-style: italic;
 }
+
+/* ===== Modal Responsive ===== */
+@media (max-width: 768px) {
+    .modal-container {
+        max-width: 95%;
+        padding: 1.5rem;
+        border-radius: 1rem;
+    }
+
+    .modal-wide {
+        max-width: 95%;
+    }
+
+    .modal-title {
+        font-size: 1.15rem;
+    }
+
+    .modal-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .modal-step-content {
+        min-height: 240px;
+    }
+
+    .parsed-info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+
+    .confirm-actions {
+        flex-direction: column;
+    }
+
+    .reupload-btn {
+        justify-content: center;
+    }
+
+    .confirm-start-btn {
+        justify-content: center;
+    }
+
+    .upload-zone {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .upload-icon-wrapper {
+        width: 52px;
+        height: 52px;
+    }
+
+    .interview-type-toggle {
+        flex-direction: column;
+    }
+
+    .type-toggle-btn:first-child {
+        border-right: none;
+        border-bottom: 1px solid rgba(16, 185, 129, 0.12);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-overlay {
+        padding: 0.5rem;
+    }
+
+    .modal-container {
+        padding: 1.25rem;
+        border-radius: 0.875rem;
+    }
+
+    .modal-title {
+        font-size: 1.05rem;
+    }
+
+    .modal-subtitle {
+        font-size: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal-step-label {
+        display: none;
+    }
+
+    .modal-step-circle {
+        width: 24px;
+        height: 24px;
+        font-size: 0.62rem;
+    }
+
+    .modal-steps {
+        margin-bottom: 1.25rem;
+    }
+
+    .upload-zone {
+        padding: 1.5rem 1rem;
+    }
+
+    .upload-text {
+        font-size: 0.82rem;
+    }
+
+    .upload-icon-wrapper {
+        width: 44px;
+        height: 44px;
+        border-radius: 0.75rem;
+    }
+
+    .analyse-btn {
+        font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+
+    .form-input {
+        padding: 0.6rem 0.85rem;
+        font-size: 0.8rem;
+    }
+
+    .form-label {
+        font-size: 0.72rem;
+    }
+
+    .parsed-info-card {
+        padding: 0.7rem;
+    }
+
+    .parsed-info-icon {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+    }
+
+    .skill-tag {
+        font-size: 0.62rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .scanning-doc {
+        width: 80px;
+        height: 105px;
+    }
+}

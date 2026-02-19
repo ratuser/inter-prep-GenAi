@@ -134,7 +134,7 @@ export default function InterviewChat() {
                         Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
-                        message: 'Hello, I am ready for the interview. Please introduce yourself and start.',
+                        message: 'Start the interview.',
                         conversationHistory: [],
                     }),
                 });
@@ -205,9 +205,20 @@ export default function InterviewChat() {
                 },
                 body: JSON.stringify({
                     message: text,
-                    conversationHistory: newMessages,
+                    conversationHistory: newMessages.slice(-4),
                 }),
             });
+
+            if (res.status === 429) {
+                setMessages(prev => [...prev, {
+                    role: 'ai',
+                    content: '⏳ AI is rate limited right now. Please wait 10-15 seconds and tap "Retry" below.',
+                    isRetryable: true,
+                    retryText: text,
+                }]);
+                setIsAiTyping(false);
+                return;
+            }
 
             const data = await res.json();
             const aiMessage = data.message || 'Sorry, I encountered an error. Please try again.';
@@ -337,6 +348,17 @@ export default function InterviewChat() {
                                     {msg.role === 'ai' ? 'AI Interviewer' : firstName}
                                 </div>
                                 <div className="message-text">{msg.content}</div>
+                                {msg.isRetryable && (
+                                    <button
+                                        className="retry-btn"
+                                        onClick={() => {
+                                            setMessages(prev => prev.filter((_, idx) => idx !== i));
+                                            sendMessageText(msg.retryText);
+                                        }}
+                                    >
+                                        🔄 Retry
+                                    </button>
+                                )}
                             </div>
                         </motion.div>
                     ))}

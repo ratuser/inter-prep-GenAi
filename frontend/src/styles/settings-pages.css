@@ -688,3 +688,123 @@
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.25);
 }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .settings-page {
+        max-width: 100%;
+        padding: 0.25rem 0 1.5rem;
+    }
+
+    .settings-page-title {
+        font-size: 1.35rem;
+    }
+
+    .settings-card {
+        padding: 1.25rem;
+    }
+
+    .profile-avatar-large {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+    }
+
+    .profile-hero-name {
+        font-size: 1.05rem;
+    }
+
+    .faq-answer p {
+        padding: 0 1rem 1rem 2.5rem;
+    }
+
+    .resume-card-top {
+        gap: 0.65rem;
+    }
+
+    .resume-card-icon {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-page-title {
+        font-size: 1.15rem;
+    }
+
+    .settings-page-subtitle {
+        font-size: 0.78rem;
+    }
+
+    .settings-card {
+        padding: 1rem;
+        border-radius: 0.75rem;
+    }
+
+    .profile-hero {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+
+    .profile-hero-info {
+        align-items: center;
+    }
+
+    .profile-avatar-large {
+        width: 52px;
+        height: 52px;
+        font-size: 1rem;
+        border-radius: 0.75rem;
+    }
+
+    .settings-actions {
+        flex-direction: column;
+    }
+
+    .settings-save-btn,
+    .settings-cancel-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .danger-confirm-actions {
+        flex-direction: column;
+    }
+
+    .danger-confirm-btn,
+    .danger-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .faq-question {
+        padding: 0.7rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .faq-answer p {
+        padding: 0 0.75rem 0.75rem 2rem;
+        font-size: 0.78rem;
+    }
+
+    .faq-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .resume-card {
+        padding: 0.85rem;
+    }
+
+    .resume-card-name {
+        font-size: 0.82rem;
+    }
+
+    .resume-delete-confirm {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+}
