@@ -11,9 +11,8 @@ const resumeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    filePath: {
-        type: String,
-        required: true,
+    pdfBuffer: {
+        type: Buffer,
     },
     targetRole: {
         type: String,

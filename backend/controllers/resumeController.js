@@ -71,7 +71,7 @@ const uploadResume = (req, res) => {
 // @route   GET /api/resume/status
 const getResumeStatus = async (req, res) => {
     try {
-        const resume = await Resume.findOne({ userId: req.userId });
+        const resume = await Resume.findOne({ userId: req.userId }).select('-pdfBuffer');
 
         if (!resume) {
             return res.json({ hasResume: false });
