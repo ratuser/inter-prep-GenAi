@@ -16,6 +16,7 @@ export default function InterviewChat() {
     const [input, setInput] = useState('');
     const [isAiTyping, setIsAiTyping] = useState(false);
     const [resumeInfo, setResumeInfo] = useState(null);
+    const [interviewComplete, setInterviewComplete] = useState(false);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
@@ -81,10 +82,22 @@ export default function InterviewChat() {
 
     // Speak text aloud using SpeechSynthesis
     const speakText = (text) => {
-        if (!speechSynthesis || !voiceMode) return;
+        if (!speechSynthesis) return;
+
+        // Clean markdown formatting so TTS reads naturally
+        const cleanText = text
+            .replace(/```[\s\S]*?```/g, ' code snippet ')   // code blocks → "code snippet"
+            .replace(/`([^`]+)`/g, '$1')                     // inline `code` → just the word
+            .replace(/\*\*([^*]+)\*\*/g, '$1')               // **bold** → plain
+            .replace(/\*([^*]+)\*/g, '$1')                   // *italic* → plain
+            .replace(/#{1,6}\s?/g, '')                       // ### headings → plain
+            .replace(/[-*•]\s/g, ', ')                       // bullet points → commas
+            .replace(/\n+/g, '. ')                           // newlines → sentence breaks
+            .replace(/\s{2,}/g, ' ')                         // collapse extra spaces
+            .trim();
 
         speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
+        const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.rate = 1;
         utterance.pitch = 1;
 
@@ -205,7 +218,7 @@ export default function InterviewChat() {
                 },
                 body: JSON.stringify({
                     message: text,
-                    conversationHistory: newMessages.slice(-4),
+                    conversationHistory: newMessages,
                 }),
             });
 
@@ -224,10 +237,30 @@ export default function InterviewChat() {
             const aiMessage = data.message || 'Sorry, I encountered an error. Please try again.';
             setMessages(prev => [...prev, { role: 'ai', content: aiMessage }]);
 
-            // Speak AI response if voice mode is on
-            if (voiceMode) {
-                speakText(aiMessage);
+            // Check if interview is complete
+            if (data.interviewComplete) {
+                setInterviewComplete(true);
+                // Save completed interview to database
+                try {
+                    const saveRes = await fetch(`${API_BASE}/interview/complete`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        },
+                        body: JSON.stringify({ feedbackMessage: aiMessage }),
+                    });
+                    if (!saveRes.ok) {
+                        const errData = await saveRes.json();
+                        console.error('Failed to save interview:', errData);
+                    }
+                } catch (saveErr) {
+                    console.error('Save interview error:', saveErr);
+                }
             }
+
+            // Speak AI response aloud
+            speakText(aiMessage);
         } catch (err) {
             const errorMsg = 'Sorry, I encountered an error. Please try again.';
             setMessages(prev => [...prev, { role: 'ai', content: errorMsg }]);
@@ -238,7 +271,7 @@ export default function InterviewChat() {
     };
 
     const sendMessage = () => {
-        if (!input.trim() || isAiTyping) return;
+        if (!input.trim() || isAiTyping || interviewComplete) return;
         sendMessageText(input.trim());
     };
 
@@ -407,7 +440,21 @@ export default function InterviewChat() {
 
             {/* Input Bar */}
             <div className="chat-input-bar">
-                {voiceMode ? (
+                {interviewComplete ? (
+                    /* Interview complete state */
+                    <div className="interview-complete-bar">
+                        <span className="complete-text">🎯 Interview Complete</span>
+                        <button
+                            className="back-to-dashboard-btn"
+                            onClick={() => {
+                                speechSynthesis?.cancel();
+                                navigate('/dashboard');
+                            }}
+                        >
+                            Back to Dashboard
+                        </button>
+                    </div>
+                ) : voiceMode ? (
                     /* Voice mode input */
                     <div className="voice-input-area">
                         {isSpeaking && (

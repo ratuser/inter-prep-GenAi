@@ -93,8 +93,7 @@ export default function Dashboard() {
         } else if (label === 'Upload Resume') {
             setShowUploadModal(true);
         } else if (label === 'View Analytics') {
-            // TODO: Navigate to analytics page
-            console.log('Navigating to analytics...');
+            document.querySelector('.dashboard-grid')?.scrollIntoView({ behavior: 'smooth' });
         }
     };
 

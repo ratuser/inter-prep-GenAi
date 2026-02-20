@@ -482,6 +482,44 @@
     box-shadow: 0 2px 12px rgba(16, 185, 129, 0.15);
 }
 
+/* ===== Interview Complete Bar ===== */
+.interview-complete-bar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.complete-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #10b981;
+    letter-spacing: 0.02em;
+}
+
+.back-to-dashboard-btn {
+    padding: 0.6rem 1.4rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+    color: #10b981;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.back-to-dashboard-btn:hover {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border-color: #10b981;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+    transform: translateY(-1px);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
     .interview-chat-page {

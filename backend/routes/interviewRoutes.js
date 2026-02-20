@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { chatWithAI } = require('../controllers/interviewController');
+const { chatWithAI, completeInterview } = require('../controllers/interviewController');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// Protected route
+// Protected routes
 router.post('/chat', authMiddleware, chatWithAI);
+router.post('/complete', authMiddleware, completeInterview);
 
 module.exports = router;
