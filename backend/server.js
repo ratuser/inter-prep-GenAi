@@ -14,7 +14,15 @@ const allowedOrigins = process.env.CORS_ORIGIN
     : ['http://localhost:5173', 'http://localhost:5174'];
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, curl, etc.)
+        if (!origin) return callback(null, true);
+        // Allow if in the explicit list
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        // Allow any Vercel preview/production URL
+        if (origin.endsWith('.vercel.app')) return callback(null, true);
+        callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
 }));
 app.use(express.json());
