@@ -1,20 +1,8 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const { PDFParse } = require('pdf-parse');
 const Resume = require('../models/Resume');
 
-// Multer config — only allow PDF
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '..', 'uploads'));
-    },
-    filename: (req, file, cb) => {
-        const uniqueName = `${req.userId}_${Date.now()}${path.extname(file.originalname)}`;
-        cb(null, uniqueName);
-    },
-});
-
+// Multer config — memory storage for cloud compatibility
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
         cb(null, true);
@@ -24,7 +12,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-    storage,
+    storage: multer.memoryStorage(),
     fileFilter,
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
 }).single('resume');
@@ -53,7 +41,7 @@ const uploadResume = (req, res) => {
                 {
                     userId: req.userId,
                     originalName: req.file.originalname,
-                    filePath: req.file.path,
+                    pdfBuffer: req.file.buffer,
                     status: 'uploaded',
                     targetRole: '',
                     targetCompany: '',
@@ -319,17 +307,16 @@ const analyseResume = async (req, res) => {
         }
 
         // Parse the PDF (pdf-parse v2 API)
-        const pdfBuffer = fs.readFileSync(resume.filePath);
-        const parser = new PDFParse({ data: pdfBuffer });
+        if (!resume.pdfBuffer) {
+            return res.status(400).json({ message: 'No PDF data found. Please re-upload your resume.' });
+        }
+        const parser = new PDFParse({ data: resume.pdfBuffer });
         const pdfData = await parser.getText();
         await parser.destroy();
         const rawText = pdfData.text || '';
 
         // Extract structured data
         const parsedData = extractResumeData(rawText);
-
-        // ── Log neatly to console ──
-        logParsedData(parsedData);
 
         // Update resume
         resume.targetRole = targetRole;
@@ -364,12 +351,6 @@ const deleteResume = async (req, res) => {
         const resume = await Resume.findOne({ _id: req.params.id, userId: req.userId });
         if (!resume) {
             return res.status(404).json({ message: 'Resume not found' });
-        }
-
-        // Delete the uploaded file
-        const fs = require('fs');
-        if (resume.filePath && fs.existsSync(resume.filePath)) {
-            fs.unlinkSync(resume.filePath);
         }
 
         await Resume.findByIdAndDelete(req.params.id);
