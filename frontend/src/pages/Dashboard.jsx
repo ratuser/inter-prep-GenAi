@@ -5,7 +5,7 @@ import { Mic, FileText, BarChart3, Target, Brain, Zap, Clock, Award, TrendingUp 
 import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
 import ResumeUploadModal from '../components/dashboard/ResumeUploadModal';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const iconMap = { Mic, Brain, TrendingUp, Zap, Target, Award };
 

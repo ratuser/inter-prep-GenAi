@@ -4,7 +4,7 @@ import { Send, Bot, User, ArrowLeft, Loader2, Mic, MicOff, Volume2, VolumeX, Key
 import { useNavigate } from 'react-router-dom';
 import '../styles/interview.css';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Check browser support for Speech APIs
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;

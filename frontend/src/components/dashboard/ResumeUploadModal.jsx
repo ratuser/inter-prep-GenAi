@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, FileText, CheckCircle, X, AlertCircle, Briefcase, Building2, Clock, Sparkles, User, Mail, Phone, Code, GraduationCap, RotateCcw, Monitor, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const STEPS = {
     UPLOAD: 'upload',

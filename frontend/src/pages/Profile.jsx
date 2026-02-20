@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { UserCircle, Mail, Calendar, Shield, Edit3, Save, X, FileText, Briefcase, Building2, Clock, Trash2, Code, MessageCircle } from 'lucide-react';
 import '../styles/settings-pages.css';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Profile() {
     const [user, setUser] = useState(null);

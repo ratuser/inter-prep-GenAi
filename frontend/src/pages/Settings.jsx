@@ -4,7 +4,7 @@ import { Lock, Eye, EyeOff, Save, Trash2, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/settings-pages.css';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Settings() {
     const navigate = useNavigate();
